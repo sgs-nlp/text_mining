@@ -8,7 +8,7 @@ from text_mining.settings import MEDIA_FOLDER_NAME
 from os.path import join
 
 
-def response():
+def _response():
     def decorator(function):
         @wraps(function)
         def wrap(request: HttpRequest, *args, **kwargs):
@@ -30,6 +30,9 @@ def response():
         return wrap
 
     return decorator
+
+
+response = _response()
 
 # def clean_data(data: HttpRequest) -> [dict, dict]:
 #     _input = None

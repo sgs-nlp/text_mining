@@ -5,11 +5,10 @@ from repository.decorators import response
 from django.http import HttpRequest
 from text_mining.settings import MEDIA_FOLDER_NAME
 from os.path import join
-import json
 
 
 @require_POST
-@response()
+@response
 def document_view(request: HttpRequest):
     d_input = DocumentInput(request.POST)
     if not d_input.is_valid():

@@ -7,13 +7,18 @@ class CorpusModelAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(FeaturesDocumentCorpus)
+class FeaturesDocumentCorpusModelAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Document)
 class DocumentModelAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Paragraph)
-class ParagraphModelAdmin(admin.ModelAdmin):
+@admin.register(FeaturesSentenceDocument)
+class FeaturesSentenceDocumentModelAdmin(admin.ModelAdmin):
     pass
 
 
@@ -22,21 +27,16 @@ class SentenceModelAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(KeyWord)
-class KeyWordModelAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(StopWord)
-class StopWordModelAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Topic)
-class TopicModelAdmin(admin.ModelAdmin):
+@admin.register(FeaturesWordSentence)
+class FeaturesWordSentenceModelAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Word)
 class WordModelAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Class)
+class ClassModelAdmin(admin.ModelAdmin):
     pass

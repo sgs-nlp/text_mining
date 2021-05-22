@@ -1,7 +1,7 @@
 from typing import Optional
 from repository.pre_processing import edit_symbol_spacing
 from repository.extractor import Stopwords, Keywords
-
+from texts.models import Word
 
 class Document:
     def __init__(self, string):
@@ -19,7 +19,14 @@ class Document:
     def add_to_db(self):
         if not self.is_valid:
             return None
-        pass
+        # word to db
+        _d_words = self.words
+        for _s_words in _d_words:
+            for _word in _s_words:
+                if Word.objects.filter(char=_word).first() is None:
+                    wrd = Word()
+                    wrd.char = _word
+                    wrd.save()
 
     @property
     def keywords(self) -> Optional[list]:
