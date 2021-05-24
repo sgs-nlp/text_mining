@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Corpus(models.Model):
+    # todo id : create id by word id hashing
     stop_words = models.ManyToManyField(
         to='Word',
         related_name='t_c_stop_words',
@@ -35,6 +36,7 @@ class FeaturesDocumentCorpus(models.Model):
 
 
 class Document(models.Model):
+    # todo id : create id by word id hashing
     _sentences = None
 
     @property
@@ -101,6 +103,7 @@ class FeaturesSentenceDocument(models.Model):
 
 
 class Sentence(models.Model):
+    # todo id : create id by word id hashing
     _string = None
 
     @property
@@ -174,3 +177,40 @@ class Class(models.Model):
 
     def __str__(self):
         return f'{self.string}'
+
+
+def word2db(value: str) -> Word:
+    wrd = Word.objects.filter(string=value).first()
+    if wrd is not None:
+        return wrd
+    from repository.converter import to_hash
+    wrd = Word()
+    wrd.pk = to_hash([value])
+    wrd.string = value
+    wrd.save()
+    return wrd
+
+
+def sentence2db(value: list) -> Sentence:
+    sent_id = to_hash(value)
+    snt = Sentence.objects.filter(pk=sent_id).first()
+    if snt is not None:
+        return snt
+    words = value
+    snt = Sentence()
+    snt.pk = sent_id
+    snt.save()
+    f_w_s = FeaturesWordSentence()
+    f_w_s.sentence = snt
+    f_w_s.previous_word = None
+    f_w_s.word = word2db(words[0])
+    f_w_s.next_word = word2db(words[1])
+    f_w_s.save()
+    for i in range(len(words) - 2):
+        f_w_s = FeaturesWordSentence()
+        f_w_s.sentence = snt
+        f_w_s.previous_word = word2db(words[i])
+        f_w_s.word = word2db(words[i + 1])
+        f_w_s.next_word = word2db(words[i + 2])
+        f_w_s.save()
+    return snt
