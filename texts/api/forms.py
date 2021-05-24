@@ -16,19 +16,29 @@ class DocumentInput(forms.Form):
 class DocumentOutput(forms.Form):
     normal_document_path = forms.BooleanField(
         required=False,
+        initial=True,
     )
     sentence_tokenize = forms.BooleanField(
         required=False,
+        initial=True,
     )
     word_tokenize = forms.BooleanField(
         required=False,
+        initial=True,
     )
     stop_words_list = forms.BooleanField(
         required=False,
+        initial=True,
     )
     key_words_list = forms.BooleanField(
         required=False,
+        initial=True,
+    )
+    normal_document = forms.BooleanField(
+        required=False,
+        initial=True,
     )
     save_to_file = forms.BooleanField(
         required=False,
+        initial=True,
     )

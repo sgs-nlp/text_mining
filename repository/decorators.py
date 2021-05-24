@@ -6,14 +6,28 @@ from texts.api.controlers import Document
 from django.http import HttpRequest
 from text_mining.settings import MEDIA_FOLDER_NAME
 from os.path import join
+from repository.converter import to_query_dict
 
 
-def _response():
+def response(input_rule=None, output_rule=None):
     def decorator(function):
         @wraps(function)
         def wrap(request: HttpRequest, *args, **kwargs):
             try:
-                result = function(request, *args, **kwargs)
+                input_fields = {}
+                if input_rule is not None:
+                    input_fields = input_rule(request.POST)
+                if not input_fields.is_valid():
+                    raise Exception(str(input_fields.errors))
+                input_fields = input_fields.cleaned_data
+                output_fields = {}
+                if input_rule is not None:
+                    if 'output_fields' in request.POST:
+                        output_fields = output_rule(to_query_dict(request.POST['output_fields']))
+                        if not output_fields.is_valid():
+                            raise Exception(str(output_fields.errors))
+                        output_fields = output_fields.cleaned_data
+                result = function(input_fields, output_fields)
                 return JsonResponse({
                     'success': True,
                     'message': None,
@@ -30,20 +44,3 @@ def _response():
         return wrap
 
     return decorator
-
-
-response = _response()
-
-# def clean_data(data: HttpRequest) -> [dict, dict]:
-#     _input = None
-#     _output = None
-#
-#     d_input = DocumentInput(data)
-#     if not d_input.is_valid():
-#         raise Exception(str(d_input.errors))
-#     _input = d_input.cleaned_data
-#     d_output = DocumentOutput(data)
-#     if not d_output.is_valid():
-#         raise Exception(str(d_output.errors))
-#
-#     return _input, _output
