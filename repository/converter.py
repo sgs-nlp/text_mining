@@ -21,9 +21,26 @@ def to_boolean(value):
     return value
 
 
-def to_hash(values: str) -> str:
-    string = ''
-    for value in values:
-        string += f'{value}'
-    string = hash(string)
-    return string
+def to_hash(value: str, string_type: str = None) -> str:
+    if string_type is None or string_type == 'word' or string_type == 'w':
+        return hash(f'{value}')
+    elif string_type == 's' or string_type == 'sent' or string_type == 'sentence':
+        string = ''
+        for word in value:
+            string += f'{word}'
+        return hash(string)
+    elif string_type == 'd' or string_type == 'doc' or string_type == 'document':
+        string = ''
+        for sent in value:
+            for word in sent:
+                string += f'{word}'
+        return hash(f'{value}')
+    elif string_type == 'c' or string_type == 'crp' or string_type == 'corpus':
+        string = ''
+        for doc in value:
+            for sent in doc:
+                for word in sent:
+                    string += f'{word}'
+        return hash(f'{value}')
+    else:
+        return None
