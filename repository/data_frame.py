@@ -1,3 +1,4 @@
+from typing import Optional
 from hazm import Normalizer
 
 h_normalizer = Normalizer(

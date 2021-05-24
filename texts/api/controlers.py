@@ -1,6 +1,6 @@
 import json
 import os.path
-from typing import Optional
+
 
 from texts.models import word2db, sentence2db, document2db
 from repository.pre_processing import edit_symbol_spacing
