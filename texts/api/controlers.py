@@ -1,15 +1,10 @@
 import json
 import os.path
 
-
-from texts.models import word2db, sentence2db, document2db
-from repository.pre_processing import edit_symbol_spacing
-from repository.extractor import Stopwords, Keywords
 from repository.data_frame import Word, Sentence, Document
 
 
 def document_analysis(input_fields, output_fields):
-    print(output_fields)
     string = ''
     document_path = None
     if len(input_fields['document_path']):
@@ -62,7 +57,6 @@ def document_analysis(input_fields, output_fields):
     if output_fields['save_to_file'] is True:
         output_path = os.path.join(dir_name, f'{name}.output.json')
         j_output = json.dumps(output)
-        print(j_output)
         with open(output_path, 'w') as file:
             file.write(j_output)
         output['result_file_path'] = str(output_path)
