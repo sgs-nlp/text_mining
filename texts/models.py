@@ -185,14 +185,15 @@ def word2db(value: str) -> Word:
         return wrd
     from repository.converter import to_hash
     wrd = Word()
-    wrd.pk = to_hash([value])
+    wrd.pk = to_hash(value)
     wrd.string = value
     wrd.save()
     return wrd
 
 
 def sentence2db(value: list) -> Sentence:
-    sent_id = to_hash(value)
+    from repository.converter import to_hash
+    sent_id = to_hash(value, 's')
     snt = Sentence.objects.filter(pk=sent_id).first()
     if snt is not None:
         return snt
@@ -214,3 +215,29 @@ def sentence2db(value: list) -> Sentence:
         f_w_s.next_word = word2db(words[i + 2])
         f_w_s.save()
     return snt
+
+
+def document2db(value: list) -> Document:
+    from repository.converter import to_hash
+    doc_id = to_hash(value, 'd')
+    doc = Document.objects.filter(pk=doc_id).first()
+    if doc is not None:
+        return doc
+    sents = value
+    doc = Document()
+    doc.pk = doc_id
+    doc.save()
+    f_s_d = FeaturesSentenceDocument()
+    f_s_d.document = doc
+    f_s_d.previous_sentence = None
+    f_s_d.sentence = sentence2db(sents[0])
+    f_s_d.next_sentence = sentence2db(sents[1])
+    f_s_d.save()
+    for i in range(len(sents) - 2):
+        f_s_d = FeaturesSentenceDocument()
+        f_s_d.document = doc
+        f_s_d.previous_sentence = sentence2db(sents[i])
+        f_s_d.sentence = sentence2db(sents[i + 1])
+        f_s_d.next_sentence = sentence2db(sents[i + 2])
+        f_s_d.save()
+    return doc
