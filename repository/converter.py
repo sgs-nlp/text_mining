@@ -19,3 +19,11 @@ def to_boolean(value):
     if value == 'False' or value == 'false' or value == 0 or value == '0':
         return False
     return value
+
+
+def to_hash(values: str) -> str:
+    string = ''
+    for value in values:
+        string += f'{value}'
+    string = hash(string)
+    return string
