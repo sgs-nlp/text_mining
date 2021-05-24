@@ -36,11 +36,10 @@ class FeaturesDocumentCorpus(models.Model):
 
 
 class Document(models.Model):
-    # todo id : create id by word id hashing
     _sentences = None
 
     @property
-    def sentence(self):
+    def sentences(self):
         if self._sentences is not None:
             return self._sentences
         document_sentences = FeaturesSentenceDocument.objects.filter(document=self.pk).all()
@@ -103,7 +102,6 @@ class FeaturesSentenceDocument(models.Model):
 
 
 class Sentence(models.Model):
-    # todo id : create id by word id hashing
     _string = None
 
     @property
@@ -120,6 +118,15 @@ class Sentence(models.Model):
             self._string += f' {word.string}'
             next_word = sentence_word.next_word
         return self._string
+
+    def to_dict(self):
+        return {
+            'id': self.pk,
+            'string': self.string,
+        }
+
+    def __str__(self):
+        return f'{self.pk}'
 
 
 class FeaturesWordSentence(models.Model):
@@ -163,6 +170,12 @@ class Word(models.Model):
         blank=False,
     )
 
+    def to_dict(self):
+        return {
+            'id': self.pk,
+            'string': self.string,
+        }
+
     def __str__(self):
         return f'{self.string}'
 
@@ -174,6 +187,12 @@ class Class(models.Model):
         null=False,
         blank=False,
     )
+
+    def to_dict(self):
+        return {
+            'id': self.pk,
+            'title': self.title,
+        }
 
     def __str__(self):
         return f'{self.string}'
