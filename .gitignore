@@ -2,3 +2,7 @@
 .idea
 __pycache__
 */media/*
+sample/*.normal.*
+sample/*.output.*
+
+my_test.py
