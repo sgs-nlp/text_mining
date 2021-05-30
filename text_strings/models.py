@@ -35,7 +35,7 @@ class TextStringRelation(models.Model):
     )
 
 
-class Keyword(models.Model):
+class DocumentKeyword(models.Model):
     document = models.ForeignKey(
         to='TextString',
         on_delete=models.CASCADE,
@@ -46,6 +46,17 @@ class Keyword(models.Model):
         on_delete=models.CASCADE,
         related_name='t_s_k_keyword',
     )
+
+
+class UserScoringToDocumentKeywords(models.Model):
+    user_id = models.CharField(
+        max_length=512,
+    )
+    keyword = models.ForeignKey(
+        to=DocumentKeyword,
+        on_delete=models.CASCADE,
+    )
+    is_keyword = models.BooleanField()
 
 
 def save2db(txt: Optional[Union[WordType, SentenceType, DocumentType]]) -> TextString:
@@ -73,7 +84,7 @@ def keywords_save2db(document: DocumentType, keywords: list) -> dict:
     _keywords = []
     for keyword in keywords:
         keyword = save2db(keyword)
-        keyword = Keyword(document=document, keyword=keyword)
+        keyword = DocumentKeyword(document=document, keyword=keyword)
         keyword.save()
         _keywords.append(keyword.keyword)
     keywords = _keywords
