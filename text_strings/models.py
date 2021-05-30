@@ -12,6 +12,11 @@ class TextString(models.Model):
         max_length=32,
     )
 
+    def __iter__(self):
+        yield 'id', self.pk
+        yield 'public_key', self.public_key
+        yield 'type', self.type
+
 
 class TextStringRelation(models.Model):
     parent = models.ForeignKey(
@@ -25,19 +30,25 @@ class TextStringRelation(models.Model):
         related_name='text_string_child',
     )
     order = models.IntegerField(
-        unique=True,
+        unique=False,
     )
 
 
-def save2db(txt_str: Optional[Union[WordType, SentenceType, DocumentType]]) -> TextString:
-    try:
-        s = String.objects.filter(public_key=txt_str.alias).first()
-        if s is not None:
-            return s
-        s = TextString()
-        s.public_key = txt_str.alias
-        s.type = type(txt_str)
-        s.save()
-        return s
-    except:
-        raise Exception('input value type is not permitted.')
+def save2db(txt: Optional[Union[WordType, SentenceType, DocumentType]]) -> TextString:
+    _text_string = TextString.objects.filter(public_key=txt.alias).first()
+    if _text_string is not None:
+        return _text_string
+    _text_string = TextString()
+    _text_string.public_key = txt.alias
+    _text_string.type = type(txt)
+    _text_string.save()
+    if type(txt) == WordType:
+        return _text_string
+    for indx, itm in enumerate(txt.value):
+        _sub_text_strings = save2db(itm)
+        _text_string_relation = TextStringRelation()
+        _text_string_relation.parent = _text_string
+        _text_string_relation.child = _sub_text_strings
+        _text_string_relation.order = indx
+        _text_string_relation.save()
+    return _text_string
