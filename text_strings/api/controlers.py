@@ -3,8 +3,10 @@ import os.path
 
 # from repository.data_frame import Word, Sentence, Document
 from repository.types import WordType, SentenceType, DocumentType
-from text_strings.models import save2db, keywords_save2db
+from text_strings.models import save2db, keywords_save2db, TextString, DocumentKeyword
 from repository.extractor import Keywords, Stopwords
+
+from text_strings.serializer import keywords_to_dict
 
 stopword_list = Stopwords()
 stopword_list = stopword_list.STOPWORDSLIST
@@ -36,11 +38,16 @@ def keywords_extract(document: str):
     return keywords_save2db(document, keywords)
 
 
-#
-#
-# def word2db(word: str):
-#     word = WordType(word)
-#     return save2db(word)
+def document_keywords(document_public_key: str):
+    document = TextString.objects.filter(public_key=document_public_key).first()
+    keywords = DocumentKeyword.objects.filter(document=document).all()
+    keywords = [keyword.keyword for keyword in keywords]
+    return keywords_to_dict(document, keywords)
+
+
+def is_keywords(document_public_key: str, keywords_list):
+    #todo
+    return save2db(word)
 
 
 def document_analysis(input_fields, output_fields):
