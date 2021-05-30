@@ -42,7 +42,7 @@ class Stopwords:
 
 class Keywords:
     def __init__(self, stopwords_list: list = None, minimum_frequency: float = 0.51,
-                 maximum_frequency: float = 1) -> None:
+                 maximum_frequency: float = 1, keywords_number: int = -1) -> None:
         """
         in kelas modiriyate keyword ha ra anjam midahad.
         :param stopwords_list: list paythoni az stopword ha.
@@ -51,6 +51,7 @@ class Keywords:
         :param maximum_frequency: adadi beyene sefr va yek,
          bishtarin frquency ehtemali baraye shenasayi kalamate ba arzeshe bishtar.
         """
+        self.keywords_number = keywords_number
         if stopwords_list is not None:
             self.stopwords_list = stopwords_list
 
@@ -77,7 +78,7 @@ class Keywords:
         for (word, value) in res.items():
             if self.minimum_frequency <= value <= self.maximum_frequency:
                 keywords.append(word)
-        return keywords
+        return keywords[:self.keywords_number]
 
 
 class Frequency:
