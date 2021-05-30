@@ -112,11 +112,10 @@ class Keywords2DBOutput(forms.Form):
 
 
 class KeywordsInput(forms.Form):
-    pass
-
-
-class KeywordsOutput(forms.Form):
-    pass
+    document = forms.CharField(
+        required=True,
+        min_length=1,
+    )
 
 
 class IsKeywordsInput(forms.Form):
