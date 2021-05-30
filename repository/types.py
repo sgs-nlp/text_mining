@@ -36,8 +36,12 @@ class WordType:
         return [self._value]
 
     @property
+    def unique_words_list(self):
+        return [self._value]
+
+    @property
     def alias(self):
-        return to_hash(self._value)
+        return self._value
 
 
 class SentenceType:
@@ -100,13 +104,26 @@ class SentenceType:
         if self._words is not None:
             return self._words
         _words = []
+        for wrds in self.value:
+            for wrd in wrds.words:
+                _words.append(wrd)
+        self._words = _words
+        return self._words
+
+    _unique_words_list = None
+
+    @property
+    def unique_words_list(self):
+        if self._unique_words_list is not None:
+            return self._unique_words_list
+        _words = []
         for wrd in self.value:
             wrd = wrd.words[0]
             if wrd not in _words:
                 _words.append(wrd)
 
-        self._words = _words
-        return self._words
+        self._unique_words_list = _words
+        return self._unique_words_list
 
     _alias = None
 
@@ -180,15 +197,28 @@ class DocumentType:
 
     @property
     def words(self):
-        if self._words is not None:
-            return self._words
+        if self._unique_words_list is not None:
+            return self._unique_words_list
+        _words = []
+        for wrds in self.value:
+            for wrd in wrds.words:
+                _words.append(wrd)
+        self._unique_words_list = _words
+        return self._unique_words_list
+
+    _unique_words_list = None
+
+    @property
+    def unique_words_list(self):
+        if self._unique_words_list is not None:
+            return self._unique_words_list
         _words = []
         for wrds in self.value:
             for wrd in wrds.words:
                 if wrd not in _words:
                     _words.append(wrd)
-        self._words = _words
-        return self._words
+        self._unique_words_list = _words
+        return self._unique_words_list
 
     _alias = None
 
