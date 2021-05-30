@@ -6,7 +6,7 @@ from django.http import HttpRequest
 
 from text_strings.api.forms import *
 from repository.decorators import response, response2
-from .controlers import word2db, sentence2db, document2db
+from .controlers import word2db, sentence2db, document2db, keywords_extract
 
 
 @require_POST
@@ -52,9 +52,10 @@ def keywords2db_view(input_fields, output_fields):
 
 
 @require_POST
-@response(KeywordsInput, KeywordsOutput)
-def keywords_view(input_fields, output_fields):
-    pass
+@response2(KeywordsInput)
+def keywords_view(input_fields):
+    res = keywords_extract(input_fields['document'])
+    return res
 
 
 @require_POST
