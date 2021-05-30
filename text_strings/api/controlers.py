@@ -3,7 +3,11 @@ import os.path
 
 # from repository.data_frame import Word, Sentence, Document
 from repository.types import WordType, SentenceType, DocumentType
-from text_strings.models import save2db
+from text_strings.models import save2db, keywords_save2db
+from repository.extractor import Keywords, Stopwords
+
+stopword_list = Stopwords()
+stopword_list = stopword_list.STOPWORDSLIST
 
 
 def word2db(word: str):
@@ -23,6 +27,13 @@ def document2db(document: str):
     document = save2db(document)
     return dict(document)
 
+
+def keywords_extract(document: str):
+    document = DocumentType(document)
+    keyword_extractor = Keywords(stopwords_list=stopword_list, keywords_number=5, minimum_frequency=0.3)
+    keywords = keyword_extractor.by_frequency(document=document.tokens)
+    keywords = [WordType(keyword) for keyword in keywords]
+    return keywords_save2db(document, keywords)
 
 
 #
