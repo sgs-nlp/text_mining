@@ -4,20 +4,21 @@ from os.path import join
 from django.views.decorators.http import require_POST
 from django.http import HttpRequest
 
-from texts.api.forms import *
-from repository.decorators import response
+from text_strings.api.forms import *
+from repository.decorators import response, response2
+from .controlers import word2db, sentence2db, document2db
 
 
 @require_POST
-@response(Word2DBInput, Word2DBOutput)
-def words2db_view(input_fields, output_fields):
-    pass
+@response2(Word2DBInput, Word2DBOutput)
+def words2db_view(input_fields):
+    return word2db(input_fields['word'])
 
 
 @require_POST
-@response(Sentences2DBInput, Sentences2DBOutput)
-def sentences2db_view(input_fields, output_fields):
-    pass
+@response2(Sentences2DBInput, Sentences2DBOutput)
+def sentences2db_view(input_fields):
+    return sentence2db(input_fields['sentence'])
 
 
 @require_POST
@@ -39,9 +40,9 @@ def is_index_view(input_fields, output_fields):
 
 
 @require_POST
-@response(Documents2DBInput, Documents2DBOutput)
-def documents2db_view(input_fields, output_fields):
-    pass
+@response2(Documents2DBInput, Documents2DBOutput)
+def documents2db_view(input_fields):
+    return document2db(input_fields['document'])
 
 
 @require_POST
