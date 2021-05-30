@@ -5,7 +5,6 @@ import json
 
 
 def to_query_dict(value: str) -> QueryDict:
-    value = json.loads(value)
     for k, v in value.items():
         value[k] = to_boolean(v)
     res = QueryDict('', mutable=True)
