@@ -7,11 +7,6 @@ class Word2DBInput(forms.Form):
         max_length=32,
         min_length=1,
     )
-    pos_tagging = forms.CharField(
-        required=False,
-        max_length=32,
-        min_length=1,
-    )
 
 
 class Word2DBOutput(forms.Form):
@@ -20,14 +15,42 @@ class Word2DBOutput(forms.Form):
         max_length=32,
         min_length=1,
     )
+    public_key = forms.CharField(
+        required=True,
+        max_length=512,
+        min_length=1,
+    )
+    type = forms.CharField(
+        required=True,
+        max_length=128,
+        min_length=1,
+    )
 
 
 class Sentences2DBInput(forms.Form):
-    pass
+    sentence = forms.CharField(
+        required=True,
+        max_length=32,
+        min_length=1,
+    )
 
 
 class Sentences2DBOutput(forms.Form):
-    pass
+    id = forms.CharField(
+        required=True,
+        max_length=32,
+        min_length=1,
+    )
+    public_key = forms.CharField(
+        required=True,
+        max_length=512,
+        min_length=1,
+    )
+    type = forms.CharField(
+        required=True,
+        max_length=128,
+        min_length=1,
+    )
 
 
 class Index2DBInput(forms.Form):
@@ -55,11 +78,29 @@ class IsIndexOutput(forms.Form):
 
 
 class Documents2DBInput(forms.Form):
-    pass
+    document = forms.CharField(
+        required=True,
+        max_length=32,
+        min_length=1,
+    )
 
 
 class Documents2DBOutput(forms.Form):
-    pass
+    id = forms.CharField(
+        required=True,
+        max_length=32,
+        min_length=1,
+    )
+    public_key = forms.CharField(
+        required=True,
+        max_length=512,
+        min_length=1,
+    )
+    type = forms.CharField(
+        required=True,
+        max_length=128,
+        min_length=1,
+    )
 
 
 class Keywords2DBInput(forms.Form):
