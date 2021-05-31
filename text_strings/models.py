@@ -131,3 +131,21 @@ def keywords_save2db(document: DocumentType, keywords: list) -> dict:
         _keywords.append(keyword.keyword)
     keywords = _keywords
     return keywords_to_dict(document, keywords)
+
+
+def keyword_save2db(document_id: str, word: WordType) -> dict:
+    word = save2db(word)
+    keyword = DocumentKeyword.objects.filter(document_id=document_id).filter(keyword=word).first()
+    if keyword is None:
+        keyword = DocumentKeyword(document_id=document_id, keyword=word)
+        keyword.save()
+    return {'keyword': dict(keyword)}
+
+
+def user_scoring_keyword_save2db(user_id: str, keyword_id: str, is_keyword):
+    usk = UserScoringToDocumentKeywords.objects.filter(user_id=user_id).filter(keyword_id=keyword_id).first()
+    if usk is None:
+        usk = UserScoringToDocumentKeywords(user_id=user_id, keyword_id=keyword_id)
+    usk.is_keyword = is_keyword
+    usk.save()
+    return usk
