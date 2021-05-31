@@ -104,7 +104,14 @@ class Documents2DBOutput(forms.Form):
 
 
 class Keywords2DBInput(forms.Form):
-    pass
+    document_id = forms.CharField(
+        required=True,
+        min_length=1,
+    )
+    word = forms.CharField(
+        required=True,
+        min_length=1,
+    )
 
 
 class Keywords2DBOutput(forms.Form):
