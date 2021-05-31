@@ -35,6 +35,12 @@ class TextStringRelation(models.Model):
         unique=False,
     )
 
+    def __iter__(self):
+        yield 'id', self.pk
+        yield 'parent', dict(self.parent)
+        yield 'child', dict(self.child)
+        yield 'order', self.order
+
 
 class DocumentKeyword(models.Model):
     document = models.ForeignKey(
@@ -87,6 +93,12 @@ class UserScoringToDocumentKeywords(models.Model):
         on_delete=models.CASCADE,
     )
     is_keyword = models.BooleanField()
+
+    def __iter__(self):
+        yield 'id', self.pk
+        yield 'user_id', self.user_id
+        yield 'keyword', dict(self.keyword)
+        yield 'is_keyword', self.is_keyword
 
 
 def save2db(txt: Optional[Union[WordType, SentenceType, DocumentType]]) -> TextString:
