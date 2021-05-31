@@ -66,8 +66,12 @@ def keyword2db_view(input_fields):
 @require_POST
 @response2(KeywordsInput)
 def keywords_view(input_fields):
-    if len(input_fields['document_public_key']):
-        return document_keywords(input_fields['document_public_key'])
+    return document_keywords(input_fields['document_id'])
+
+
+@require_POST
+@response2(KeywordsExtractorInput)
+def keywords_extractor_view(input_fields):
     return keywords_extract(input_fields['document'])
 
 
