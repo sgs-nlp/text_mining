@@ -11,12 +11,11 @@ urlpatterns = [
     path('sentence/index', routes.index_view),
     path('sentence/index/update', routes.is_index_view),
 
-
-    path('documents/add', routes.documents2db_view),
-    path('document/keywords/add', routes.keywords2db_view),
+    path('documents/add', routes.document2db_view),
+    path('document/keywords/add', routes.keyword2db_view),
     path('document/keywords/list', routes.keywords_view),
-    path('document/keywords/update', routes.is_keywords_view),
-
+    path('document/keywords/extract', routes.keywords_extractor_view),
+    path('document/keywords/scoring', routes.is_keywords_view),
 
     path('corpus/stopwords/add', routes.stopwords2db_view),
     path('corpus/stopwords/list', routes.stopwords_view),
@@ -24,8 +23,6 @@ urlpatterns = [
 
     path('normalize', routes.normalize_view),
     path('tokenize', routes.tokenize_view),
-
-
 
     # path('', routes._view),
     # path('', routes._view),
