@@ -119,25 +119,29 @@ class Keywords2DBOutput(forms.Form):
 
 
 class KeywordsInput(forms.Form):
-    document = forms.CharField(
-        required=False,
+    document_id = forms.CharField(
+        required=True,
         min_length=1,
     )
-    document_public_key = forms.CharField(
-        required=False,
+
+
+class KeywordsExtractorInput(forms.Form):
+    document = forms.CharField(
+        required=True,
         min_length=1,
     )
 
 
 class IsKeywordsInput(forms.Form):
-    document_public_key = forms.CharField(
-        required=False,
+    user_id = forms.CharField(
+        required=True,
         max_length=512,
         min_length=1,
     )
     keywords_score_list = forms.JSONField(
-        required=False,
+        required=True,
     )
+
 
 class IsKeywordsOutput(forms.Form):
     pass
