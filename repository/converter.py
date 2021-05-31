@@ -4,6 +4,15 @@ from django.http import QueryDict
 import json
 
 
+def to_pydict(dictionary: dict, key_format: str = 'str', value_format: str = 'bool') -> dict:
+    if key_format == 'str' and value_format == 'bool':
+        _dict = {}
+        for key, value in dictionary.items():
+            _dict[str(key)] = to_boolean(value)
+        return _dict
+    return {}
+
+
 def to_query_dict(value: str) -> QueryDict:
     for k, v in value.items():
         value[k] = to_boolean(v)
