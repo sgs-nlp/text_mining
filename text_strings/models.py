@@ -124,11 +124,13 @@ def save2db(txt: Optional[Union[WordType, SentenceType, DocumentType]]) -> TextS
 def keywords_save2db(document: DocumentType, keywords: list) -> dict:
     document = save2db(document)
     _keywords = []
-    for keyword in keywords:
-        keyword = save2db(keyword)
-        keyword = DocumentKeyword(document=document, keyword=keyword)
-        keyword.save()
-        _keywords.append(keyword.keyword)
+    for word in keywords:
+        word = save2db(word)
+        keyword = DocumentKeyword.objects.filter(document=document).filter(keyword=word).first()
+        if keyword is None:
+            keyword = DocumentKeyword(document=document, keyword=word)
+            keyword.save()
+        _keywords.append(keyword)
     keywords = _keywords
     return keywords_to_dict(document, keywords)
 
