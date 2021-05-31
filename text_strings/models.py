@@ -2,6 +2,7 @@ from django.db import models
 from repository.types import WordType, SentenceType, DocumentType
 from typing import Optional, Union
 from .serializer import keywords_to_dict
+from text_mining.settings import THRESHOLD_OF_ACTIONS, MINIMUM_PARTICIPATION
 
 
 class TextString(models.Model):
@@ -46,6 +47,35 @@ class DocumentKeyword(models.Model):
         on_delete=models.CASCADE,
         related_name='t_s_k_keyword',
     )
+    _is_keyword = models.BooleanField(
+        default=True,
+    )
+
+    @property
+    def is_keyword(self):
+        all_user_score = UserScoringToDocumentKeywords.objects.filter(keyword=self).all()
+        if all_user_score is None:
+            return self._is_keyword
+        user_len = len(all_user_score)
+        if user_len < MINIMUM_PARTICIPATION:
+            return self._is_keyword
+        score = 0
+        for user_score in all_user_score:
+            if user_score.is_keyword:
+                score += 1
+
+        if score / user_len >= THRESHOLD_OF_ACTIONS:
+            self._is_keyword = True
+            return self._is_keyword
+
+        self._is_keyword = False
+        return self._is_keyword
+
+    def __iter__(self):
+        yield 'id', self.pk
+        yield 'is_keyword', self.is_keyword
+        yield 'document', dict(self.document)
+        yield 'word', dict(self.keyword)
 
 
 class UserScoringToDocumentKeywords(models.Model):
