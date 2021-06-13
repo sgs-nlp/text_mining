@@ -15,6 +15,7 @@ from .controlers import (
     document_keywords,
     is_keywords,
     keyword2db,
+    corpus2db,
 )
 
 
@@ -84,6 +85,12 @@ def is_keywords_view(input_fields):
         user_id=input_fields['user_id'],
         keywords_score_list=keywords_score_list
     )
+
+
+@require_POST
+@response2(Corpus2DBInput, Corpus2DBOutput)
+def corpus2db_view(input_fields):
+    return corpus2db(input_fields['corpus_path'])
 
 
 # todo
