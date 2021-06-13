@@ -2,7 +2,7 @@ import json
 import os.path
 
 # from repository.data_frame import Word, Sentence, Document
-from repository.types import WordType, SentenceType, DocumentType
+from repository.types import WordType, SentenceType, DocumentType,CorpusType
 from text_strings.models import (
     save2db,
     keywords_save2db,
@@ -61,6 +61,19 @@ def is_keywords(user_id: str, keywords_score_list: dict):
 def keyword2db(document_id: str, word: str):
     word = WordType(word)
     return keyword_save2db(document_id, word)
+
+
+def corpus2db(corpus_path: str):
+    corpus = CorpusType(corpus_path)
+    corpus = save2db(corpus)
+    return dict(corpus)
+
+
+def stopwords_list2db(corpus_path: str):
+    corpus = CorpusType(corpus_path)
+    corpus = save2db(corpus)
+    return dict(corpus)
+
 
 
 def document_analysis(input_fields, output_fields):
