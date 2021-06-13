@@ -1,8 +1,75 @@
 from django.db import models
-from repository.types import WordType, SentenceType, DocumentType
+from repository.types import WordType, SentenceType, DocumentType, CorpusType
 from typing import Optional, Union
 from .serializer import keywords_to_dict
 from text_mining.settings import THRESHOLD_OF_ACTIONS, MINIMUM_PARTICIPATION
+
+
+# class NodeType(models.Model):
+#     title = models.CharField(
+#         max_length=128,
+#     )
+#     features = models.JSONField()
+#
+#
+# class RelationType(models.Model):
+#     title = models.CharField(
+#         max_length=64,
+#     )
+#     parent = models.ForeignKey(
+#         to='RelationType',
+#         on_delete=models.CASCADE,
+#     )
+#     permitted_type4from_ = models.ForeignKey(
+#         to='NodeType',
+#         on_delete=models.CASCADE,
+#         related_name='t_s_rt_pt_from',
+#     )
+#     permitted_type4to_ = models.ForeignKey(
+#         to='NodeType',
+#         on_delete=models.CASCADE,
+#         related_name='t_s_rt_pt_to',
+#     )
+#     features = models.JSONField()
+#
+#
+# class Node(models.Model):
+#     public_key = models.CharField(
+#         max_length=512,
+#         unique=True,
+#     )
+#     type = models.ForeignKey(
+#         to='NodeType',
+#         on_delete=models.CASCADE,
+#     )
+#
+#     def __iter__(self):
+#         yield 'id', self.pk
+#         yield 'public_key', self.public_key
+#         yield 'type', dict(self.type)
+#
+#
+# class Edge(models.Model):
+#     from_ = models.ForeignKey(
+#         to='Node',
+#         on_delete=models.CASCADE,
+#         related_name='t_s_e_from',
+#     )
+#     to_ = models.ForeignKey(
+#         to='Node',
+#         on_delete=models.CASCADE,
+#         related_name='t_s_e_from',
+#     )
+#     relation_type = models.ForeignKey(
+#         to='RelationType',
+#         on_delete=models.CASCADE,
+#     )
+#
+#     def __iter__(self):
+#         yield 'id', self.pk
+#         yield 'from', dict(self.from_)
+#         yield 'to', dict(self.to_)
+#         yield 'features', dict(self.features)
 
 
 class TextString(models.Model):
@@ -101,7 +168,66 @@ class UserScoringToDocumentKeywords(models.Model):
         yield 'is_keyword', self.is_keyword
 
 
-def save2db(txt: Optional[Union[WordType, SentenceType, DocumentType]]) -> TextString:
+class CorpusStopword(models.Model):
+    corpus = models.ForeignKey(
+        to='TextString',
+        on_delete=models.CASCADE,
+        related_name='t_c_s_corpus',
+    )
+    stopword = models.ForeignKey(
+        to='TextString',
+        on_delete=models.CASCADE,
+        related_name='t_c_s_stopword',
+    )
+    _is_stopword = models.BooleanField(
+        default=True,
+    )
+
+    @property
+    def is_stopword(self):
+        all_user_score = UserScoringToCorpusStopword.objects.filter(stopword=self).all()
+        if all_user_score is None:
+            return self._is_stopword
+        user_len = len(all_user_score)
+        if user_len < MINIMUM_PARTICIPATION:
+            return self._is_stopword
+        score = 0
+        for user_score in all_user_score:
+            if user_score.is_stopword:
+                score += 1
+
+        if score / user_len >= THRESHOLD_OF_ACTIONS:
+            self._is_stopword = True
+            return self._is_stopword
+
+        self._is_stopword = False
+        return self._is_stopword
+
+    def __iter__(self):
+        yield 'id', self.pk
+        yield 'is_stopword', self.is_stopword
+        yield 'corpus', dict(self.corpus)
+        yield 'word', dict(self.stopword)
+
+
+class UserScoringToCorpusStopword(models.Model):
+    user_id = models.CharField(
+        max_length=512,
+    )
+    stopword = models.ForeignKey(
+        to=CorpusStopword,
+        on_delete=models.CASCADE,
+    )
+    is_stopword = models.BooleanField()
+
+    def __iter__(self):
+        yield 'id', self.pk
+        yield 'user_id', self.user_id
+        yield 'stopword', dict(self.stopword)
+        yield 'is_stopword', self.is_stopword
+
+
+def save2db(txt: Optional[Union[WordType, SentenceType, DocumentType, CorpusType]]) -> TextString:
     _text_string = TextString.objects.filter(public_key=txt.alias).first()
     if _text_string is not None:
         return _text_string
