@@ -12,7 +12,7 @@ class WordType:
         return f'{self.value}'
 
     def __eq__(self, other):
-        return similar(self.__str__(), str(other))
+        return similar(self.alias, other.alias)
 
     def __repr__(self):
         return repr(self.value)
@@ -29,7 +29,7 @@ class WordType:
 
     @property
     def tokens(self):
-        return [self._value]
+        return self._value
 
     @property
     def words(self):
@@ -45,31 +45,8 @@ class WordType:
 
 
 class SentenceType:
-    def __init__(self, value: Optional[Union[str, List[WordType]]]):
+    def __init__(self, value: str):
         self.value = value
-
-    _value = None
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, val):
-        if type(val) == str:
-            tokens = tokenizer_s2w(val)
-            _value = []
-            for token in tokens:
-                _value.append(WordType(token))
-            self._value = _value
-
-        elif type(val) == list:
-            for sub_val in val:
-                if type(sub_val) != WordType:
-                    raise Exception('error: value not correct.')
-            self._value = val
-        else:
-            raise Exception('error: value not correct.')
 
     def __str__(self):
         _str = ''
@@ -79,21 +56,34 @@ class SentenceType:
         return _str
 
     def __eq__(self, other):
-        return similar(self.__str__(), str(other))
+        return similar(self.alias, other.alias)
 
     def __repr__(self):
         return repr(self.value)
+
+    _value = None
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, val):
+        tokens = tokenizer_s2w(val)
+        _value = []
+        for token in tokens:
+            _value.append(WordType(token))
+        self._value = _value
 
     _tokens = None
 
     @property
     def tokens(self):
-        if self._tokens is not None:
+        if self._tokens:
             return self._tokens
         _tokens = []
-        for wrds in self.value:
-            _tokens.append(wrds.tokens[0])
-
+        for wrd in self.value:
+            _tokens.append(wrd.tokens)
         self._tokens = _tokens
         return self._tokens
 
@@ -101,12 +91,11 @@ class SentenceType:
 
     @property
     def words(self):
-        if self._words is not None:
+        if self._words:
             return self._words
         _words = []
-        for wrds in self.value:
-            for wrd in wrds.words:
-                _words.append(wrd)
+        for wrd in self.value:
+            _words += wrd.words
         self._words = _words
         return self._words
 
@@ -114,15 +103,14 @@ class SentenceType:
 
     @property
     def unique_words_list(self):
-        if self._unique_words_list is not None:
+        if self._unique_words_list:
             return self._unique_words_list
-        _words = []
+        _unique_words_list = []
         for wrd in self.value:
-            wrd = wrd.words[0]
-            if wrd not in _words:
-                _words.append(wrd)
-
-        self._unique_words_list = _words
+            for w in wrd.unique_words_list:
+                if w not in _unique_words_list:
+                    _unique_words_list.append(w)
+        self._unique_words_list = _unique_words_list
         return self._unique_words_list
 
     _alias = None
@@ -139,31 +127,8 @@ class SentenceType:
 
 
 class DocumentType:
-    def __init__(self, value: Optional[Union[str, List[SentenceType]]]):
+    def __init__(self, value: str):
         self.value = value
-
-    _value = None
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, val):
-        if type(val) == str:
-            tokens = tokenizer_s2w(val)
-            _value = []
-            for token in tokens:
-                _value.append(SentenceType(token))
-            self._value = _value
-            return
-        elif type(val) == list:
-            for sub_val in val:
-                if type(sub_val) != SentenceType:
-                    raise Exception('error: value not correct.')
-            self._value = val
-        else:
-            raise Exception('error: value not correct.')
 
     def __str__(self):
         _str = ''
@@ -173,23 +138,34 @@ class DocumentType:
         return _str
 
     def __eq__(self, other):
-        return similar(self.__str__(), str(other))
+        return similar(self.alias, other.alias)
 
     def __repr__(self):
         return repr(self.value)
+
+    _value = None
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, val):
+        tokens = tokenizer_d2s(val)
+        _value = []
+        for token in tokens:
+            _value.append(SentenceType(token))
+        self._value = _value
 
     _tokens = None
 
     @property
     def tokens(self):
-        if self._tokens is not None:
+        if self._tokens:
             return self._tokens
         _tokens = []
-        for wrds in self.value:
-            __tokens = []
-            for wrd in wrds.tokens:
-                __tokens.append(wrd)
-            _tokens.append(__tokens)
+        for sent in self.value:
+            _tokens.append(sent.tokens)
         self._tokens = _tokens
         return self._tokens
 
@@ -197,27 +173,26 @@ class DocumentType:
 
     @property
     def words(self):
-        if self._unique_words_list is not None:
-            return self._unique_words_list
+        if self._words:
+            return self._words
         _words = []
-        for wrds in self.value:
-            for wrd in wrds.words:
-                _words.append(wrd)
-        self._unique_words_list = _words
-        return self._unique_words_list
+        for sent in self.value:
+            _words += sent.words
+        self._words = _words
+        return self._words
 
     _unique_words_list = None
 
     @property
     def unique_words_list(self):
-        if self._unique_words_list is not None:
+        if self._unique_words_list:
             return self._unique_words_list
-        _words = []
-        for wrds in self.value:
-            for wrd in wrds.words:
-                if wrd not in _words:
-                    _words.append(wrd)
-        self._unique_words_list = _words
+        _unique_words_list = []
+        for sent in self.value:
+            for w in sent.unique_words_list:
+                if w not in _unique_words_list:
+                    _unique_words_list.append(w)
+        self._unique_words_list = _unique_words_list
         return self._unique_words_list
 
     _alias = None
@@ -229,5 +204,87 @@ class DocumentType:
         _alias = ''
         for sentence in self.value:
             _alias += f'{sentence.alias}-'
+        self._alias = to_hash(_alias)
+        return self._alias
+
+
+class CorpusType:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.value = file_path
+
+    def __str__(self):
+        return str(self.file_path)
+
+    def __eq__(self, other):
+        return similar(self.alias, other.alias)
+
+    _value = None
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, file_path):
+        import zipfile
+        crp = zipfile.ZipFile(file_path)
+        docs = crp.namelist()
+        docs = docs[1:]
+        _crp = []
+        for doc in docs:
+            with crp.open(doc) as file:
+                doc = file.read()
+            doc = doc.decode('utf-8')
+            _crp.append(DocumentType(doc))
+        self._value = _crp
+
+    _tokens = None
+
+    @property
+    def tokens(self):
+        if self._tokens:
+            return self._tokens
+        _tokens = []
+        for doc in self.value:
+            _tokens.append(doc.tokens)
+        self._tokens = _tokens
+        return self._tokens
+
+    _words = None
+
+    @property
+    def words(self):
+        if self._words:
+            return self._words
+        _words = []
+        for doc in self.value:
+            _words += doc.words
+        self._words = _words
+        return self._words
+
+    _unique_words_list = []
+
+    @property
+    def unique_words_list(self):
+        if self._unique_words_list:
+            return self._unique_words_list
+        _unique_words_list = []
+        for doc in self.value:
+            for w in doc.unique_words_list:
+                if w not in _unique_words_list:
+                    _unique_words_list.append(w)
+        self._unique_words_list = _unique_words_list
+        return self._unique_words_list
+
+    _alias = None
+
+    @property
+    def alias(self):
+        if self._alias is not None:
+            return self._alias
+        _alias = ''
+        for doc in self.value:
+            _alias += f'{doc.alias}-'
         self._alias = to_hash(_alias)
         return self._alias
