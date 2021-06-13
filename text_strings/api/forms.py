@@ -147,8 +147,40 @@ class IsKeywordsOutput(forms.Form):
     pass
 
 
+class Corpus2DBInput(forms.Form):
+    corpus_path = forms.CharField(
+        required=True,
+        min_length=1,
+    )
+
+
+class Corpus2DBOutput(forms.Form):
+    id = forms.CharField(
+        required=True,
+        max_length=32,
+        min_length=1,
+    )
+    public_key = forms.CharField(
+        required=True,
+        max_length=512,
+        min_length=1,
+    )
+    type = forms.CharField(
+        required=True,
+        max_length=128,
+        min_length=1,
+    )
+
+
 class Stopwords2DBInput(forms.Form):
-    pass
+    corpus_id = forms.CharField(
+        required=True,
+        min_length=1,
+        max_length=128,
+    )
+    stopword_list = forms.JSONField(
+        required=True,
+    )
 
 
 class Stopwords2DBOutput(forms.Form):
