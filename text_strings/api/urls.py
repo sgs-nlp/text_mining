@@ -17,6 +17,7 @@ urlpatterns = [
     path('document/keywords/extract', routes.keywords_extractor_view),
     path('document/keywords/scoring', routes.is_keywords_view),
 
+    path('corpus/add', routes.corpus2db_view),
     path('corpus/stopwords/add', routes.stopwords2db_view),
     path('corpus/stopwords/list', routes.stopwords_view),
     path('corpus/stopwords/update', routes.is_stopwords_view),
